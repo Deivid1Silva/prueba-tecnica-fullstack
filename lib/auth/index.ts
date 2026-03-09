@@ -2,38 +2,47 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
+
+const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    log: ["error"],
+  });
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export const auth = betterAuth({
-    database: prismaAdapter(prisma, {
-        provider: "postgresql",
-    }),
-    // URL base de producción obligatoria
-    baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
-    
-    // Configuración para proxies (Vercel)
-    advanced: {
-        useSecureCookies: process.env.NODE_ENV === "production",
-    },
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
 
-    // Importante: Deja vacía la lista o incluye específicamente tu dominio principal
-    trustedOrigins: [
-        "http://localhost:3000",
-        "https://prueba-tecnica-fullstack-sable.vercel.app"
-    ],
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
 
-    socialProviders: {
-        github: {
-            clientId: process.env.GITHUB_CLIENT_ID!,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-        },
+  secret: process.env.BETTER_AUTH_SECRET,
+
+  advanced: {
+    useSecureCookies: process.env.NODE_ENV === "production",
+  },
+
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://prueba-tecnica-fullstack-sable.vercel.app",
+  ],
+
+  socialProviders: {
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     },
-    user: {
-        additionalFields: {
-            role: {
-                type: "string",
-                defaultValue: "ADMIN",
-            },
-        },
+  },
+
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "ADMIN",
+      },
     },
+  },
 });
