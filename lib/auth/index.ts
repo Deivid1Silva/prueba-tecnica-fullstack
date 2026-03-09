@@ -4,35 +4,29 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Determinamos la URL base de forma segura para el Build de Vercel
-const getBaseUrl = () => {
-  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  // Cambia esto por tu dominio real de Vercel para mayor seguridad durante el build
-  return "https://prueba-tecnica-fullstack-sable.vercel.app";
-};
-
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
     
-    // Forzamos una URL absoluta para que el build no falle
-    baseURL: getBaseUrl(),
+    // Si estamos en Vercel, usamos su variable automática, si no, localhost
+    baseURL: process.env.BETTER_AUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
     
     advanced: {
         useSecureCookies: process.env.NODE_ENV === "production",
     },
 
+    // Esto permite que las URLs de previsualización de Vercel funcionen sin CORS
     trustedOrigins: [
         "http://localhost:3000",
-        "https://prueba-tecnica-fullstack-sable.vercel.app"
-    ],
+        "https://prueba-tecnica-fullstack-sable.vercel.app",
+        process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
+    ].filter(Boolean),
 
     socialProviders: {
         github: {
-            clientId: process.env.GITHUB_CLIENT_ID || "dummy_id",
-            clientSecret: process.env.GITHUB_CLIENT_SECRET || "dummy_secret",
+            clientId: process.env.GITHUB_CLIENT_ID!,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET!,
         },
     },
     user: {
