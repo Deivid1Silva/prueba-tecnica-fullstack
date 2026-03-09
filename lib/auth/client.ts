@@ -1,9 +1,9 @@
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-    // Asegúrate de que apunte a tu URL base
+    // Prioridad 1: Variable de Vercel
+    // Prioridad 2: Localhost (solo si la variable no existe)
     baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
-    // EXTENDEMOS LOS TIPOS DEL USUARIO AQUÍ:
     user: {
         additionalFields: {
             role: {
