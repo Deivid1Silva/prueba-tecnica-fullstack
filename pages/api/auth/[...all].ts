@@ -3,17 +3,18 @@ import { toNextJsHandler } from "better-auth/next-js";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { GET, POST } = toNextJsHandler(auth);
-
+  const authHandler = toNextJsHandler(auth);
+  
+  // Mapeo manual para asegurar compatibilidad con Vercel Serverless Functions
   if (req.method === "GET") {
     // @ts-ignore
-    return await GET(req, res);
+    return await authHandler.GET(req, res);
   }
-
+  
   if (req.method === "POST") {
     // @ts-ignore
-    return await POST(req, res);
+    return await authHandler.POST(req, res);
   }
 
-  return res.status(405).json({ message: "Method not allowed" });
+  return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
 }
