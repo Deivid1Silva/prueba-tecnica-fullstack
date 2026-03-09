@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // ELIMINADO: transpilePackages: ["better-auth"], 
+  // Esto causaba el conflicto con serverExternalPackages
+
   serverExternalPackages: ["@prisma/client", "better-auth"],
-  
-  // Forzamos a que las librerías se comporten bien con ESM
-  transpilePackages: ["better-auth"],
 
   typescript: {
     ignoreBuildErrors: true,
