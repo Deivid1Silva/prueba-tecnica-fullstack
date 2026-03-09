@@ -1,13 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["better-auth"],
-
+  // Eliminado transpilePackages para evitar el conflicto con serverExternalPackages
+  
   serverExternalPackages: ["@prisma/client", "better-auth"],
 
   typescript: {
     ignoreBuildErrors: true,
   },
-
+  
   eslint: {
     ignoreDuringBuilds: true,
   },

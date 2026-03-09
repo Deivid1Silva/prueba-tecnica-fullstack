@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
 import { toNextJsHandler } from "better-auth/next-js";
 
-// Usamos el runtime estándar de Node.js (NO Edge)
+// Exportación directa para Next.js 15 Pages Router
 export default toNextJsHandler(auth);
