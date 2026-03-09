@@ -8,8 +8,8 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
-    // FORZAMOS LA URL AQUÍ:
-    baseURL: "http://localhost:3000", 
+    // Esto detecta automáticamente la URL en Vercel o local
+    baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000", 
     socialProviders: {
         github: {
             clientId: process.env.GITHUB_CLIENT_ID!,
