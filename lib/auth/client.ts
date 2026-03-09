@@ -1,8 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-    // Al usar cadena vacía o undefined, Better Auth usa la ruta relativa /api/auth
-    // Esto evita errores de "localhost" en producción
+    // Usamos ruta relativa para que funcione tanto en local como en Vercel sin fallos
     baseURL: typeof window !== "undefined" ? window.location.origin : undefined,
     user: {
         additionalFields: {
