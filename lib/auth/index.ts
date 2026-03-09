@@ -2,47 +2,45 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const prisma = new PrismaClient();
 
-const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: ["error"],
-  });
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
-}
+// Determinamos la URL base de forma segura para el Build de Vercel
+const getBaseUrl = () => {
+  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  // Cambia esto por tu dominio real de Vercel para mayor seguridad durante el build
+  return "https://prueba-tecnica-fullstack-sable.vercel.app";
+};
 
 export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),
-
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
-
-  advanced: {
-    useSecureCookies: process.env.NODE_ENV === "production",
-  },
-
-  trustedOrigins: [
-    "http://localhost:3000",
-    "https://prueba-tecnica-fullstack-sable.vercel.app",
-  ],
-
-  socialProviders: {
-    github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    database: prismaAdapter(prisma, {
+        provider: "postgresql",
+    }),
+    
+    // Forzamos una URL absoluta para que el build no falle
+    baseURL: getBaseUrl(),
+    
+    advanced: {
+        useSecureCookies: process.env.NODE_ENV === "production",
     },
-  },
 
-  user: {
-    additionalFields: {
-      role: {
-        type: "string",
-        defaultValue: "ADMIN",
-      },
+    trustedOrigins: [
+        "http://localhost:3000",
+        "https://prueba-tecnica-fullstack-sable.vercel.app"
+    ],
+
+    socialProviders: {
+        github: {
+            clientId: process.env.GITHUB_CLIENT_ID || "dummy_id",
+            clientSecret: process.env.GITHUB_CLIENT_SECRET || "dummy_secret",
+        },
     },
-  },
+    user: {
+        additionalFields: {
+            role: {
+                type: "string",
+                defaultValue: "ADMIN",
+            },
+        },
+    },
 });
