@@ -8,8 +8,15 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
-    // Esto detecta automáticamente la URL en Vercel o local
-    baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000", 
+    // Asegúrate de que apunte a la URL de producción o localhost según el entorno
+    baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+    
+    // AGREGA ESTO: Permite que Better Auth acepte peticiones de tu dominio en Vercel
+    trustedOrigins: [
+        "https://prueba-tecnica-fullstack-sable.vercel.app",
+        "http://localhost:3000"
+    ],
+
     socialProviders: {
         github: {
             clientId: process.env.GITHUB_CLIENT_ID!,
