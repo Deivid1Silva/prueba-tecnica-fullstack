@@ -3,11 +3,20 @@ import { authClient } from "@/lib/auth/client";
 
 export default function Home() {
   const [session, setSession] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    authClient.getSession().then((res) => {
-      setSession(res.data);
-    });
+    const fetchSession = async () => {
+      try {
+        const res = await authClient.getSession();
+        setSession(res.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSession();
   }, []);
 
   const handleLogin = async () => {
