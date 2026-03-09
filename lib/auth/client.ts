@@ -1,6 +1,6 @@
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-    // Al no definir baseURL, el cliente usará automáticamente 
-    // la ruta relativa /api/auth del dominio donde esté corriendo.
+    // baseURL vacío para usar rutas relativas y evitar problemas de CORS
+    baseURL: typeof window !== "undefined" ? window.location.origin : undefined,
 });
