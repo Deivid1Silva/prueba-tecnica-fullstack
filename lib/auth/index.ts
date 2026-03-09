@@ -8,15 +8,15 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
-    // URL base de producción (configurada en Vercel)
+    // URL base de producción obligatoria
     baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
     
-    // Configuración de seguridad para Vercel
+    // Configuración para proxies (Vercel)
     advanced: {
         useSecureCookies: process.env.NODE_ENV === "production",
     },
 
-    // Orígenes permitidos para evitar el error 403
+    // Importante: Deja vacía la lista o incluye específicamente tu dominio principal
     trustedOrigins: [
         "http://localhost:3000",
         "https://prueba-tecnica-fullstack-sable.vercel.app"
@@ -28,17 +28,12 @@ export const auth = betterAuth({
             clientSecret: process.env.GITHUB_CLIENT_SECRET!,
         },
     },
-    // Sincronización con tu modelo de Prisma
     user: {
         additionalFields: {
             role: {
                 type: "string",
                 defaultValue: "ADMIN",
             },
-            phone: {
-                type: "string",
-                required: false,
-            }
         },
     },
 });
