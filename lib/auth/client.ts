@@ -1,14 +1,11 @@
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-    // Prioridad 1: Variable de Vercel
-    // Prioridad 2: Localhost (solo si la variable no existe)
-    baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
+    // Si la variable de Vercel falla, intentará usar la ruta relativa /api/auth
+    baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || window.location.origin,
     user: {
         additionalFields: {
-            role: {
-                type: "string",
-            },
+            role: { type: "string" },
         },
     },
 });
