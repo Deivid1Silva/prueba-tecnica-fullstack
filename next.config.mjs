@@ -1,9 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ELIMINADO: transpilePackages: ["better-auth"], 
-  // Esto causaba el conflicto con serverExternalPackages
-
   serverExternalPackages: ["@prisma/client", "better-auth"],
+  
+  experimental: {
+    esmExternals: false, // Esto soluciona el error de SyntaxError: Unexpected token 'export'
+  },
 
   typescript: {
     ignoreBuildErrors: true,
