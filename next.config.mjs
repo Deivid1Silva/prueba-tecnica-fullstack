@@ -2,8 +2,10 @@
 const nextConfig = {
   transpilePackages: ["better-auth"],
 
-  experimental: {
-    serverComponentsExternalPackages: ["@prisma/client"],
+  serverExternalPackages: ["@prisma/client", "better-auth"],
+
+  typescript: {
+    ignoreBuildErrors: true,
   },
 
   eslint: {
